@@ -46,7 +46,7 @@ extension EndPoint: EndPointProtocol {
     }
     
     var apiKey: String {
-        return "api_key=fab6464769e3d822047ea1ffd1e6430e"
+        return "?api_key=fab6464769e3d822047ea1ffd1e6430e"
     }
     
     var method: HTTPMethod {
@@ -61,7 +61,7 @@ extension EndPoint: EndPointProtocol {
     }
     
     func movieApiURL() -> String {
-        return "\(baseURL)\(genreURL)\(apiKey)"
+        return "\(baseURL)/\(genreURL)\(apiKey)"
     }
     func request() -> URLRequest {
         guard let apiURL = URLComponents(string: movieApiURL()) else {

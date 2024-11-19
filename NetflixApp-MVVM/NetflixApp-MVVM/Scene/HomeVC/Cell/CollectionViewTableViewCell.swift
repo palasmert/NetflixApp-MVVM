@@ -10,6 +10,7 @@ import SnapKit
 
 class CollectionViewTableViewCell: UITableViewCell {
     static let identifier = "CollectionTableViewCell"
+    var movieArr = [MovieResult]()
     private var collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout())
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -24,7 +25,10 @@ class CollectionViewTableViewCell: UITableViewCell {
     private func createCollectionView() {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
-        layout.itemSize = CGSize(width: screenWidth * 0.3, height: screenHeight * 0.45)
+        layout.itemSize = CGSize(width: screenWidth * 0.3, height: screenHeight * 0.25)
+        layout.minimumLineSpacing = 25
+        layout.minimumInteritemSpacing = 25
+        layout.sectionInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.register(MovieCollectionViewCell.self, forCellWithReuseIdentifier: MovieCollectionViewCell.identifier)
         collectionView.delegate = self
@@ -37,15 +41,35 @@ class CollectionViewTableViewCell: UITableViewCell {
             make.bottom.equalTo(contentView.snp.bottom)
         }
     }
+    
+    public func configure(movies: [MovieResult]) {
+        self.movieArr = movies
+        DispatchQueue.main.async {
+            self.collectionView.reloadData()
+        }
+    }
 }
 
-extension CollectionViewTableViewCell: UICollectionViewDataSource, UICollectionViewDelegate {
+extension CollectionViewTableViewCell: UICollectionViewDataSource, UICollectionViewDelegate,UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 15
+        return movieArr.count
     }
     
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+            return 40
+        }
+    
+    
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MovieCollectionViewCell.identifier, for: indexPath)
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MovieCollectionViewCell.identifier, for: indexPath) as! MovieCollectionViewCell
+        
+        if let model = movieArr[indexPath.row].posterPath {
+            cell.configure(model: model)
+
+        }
+            
+        
         cell.backgroundColor = .systemPurple
         return cell
     }

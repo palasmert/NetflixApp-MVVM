@@ -11,12 +11,13 @@ protocol NetworkServiceProtocol {
     func fetchData<T: Decodable>(_ endPoint: EndPoint, completion: @escaping (Result<T,Error>) -> Void)
 }
 
-final class NetworkCaller {
-    
+final class NetworkCaller: NetworkServiceProtocol {
+
     func fetchData<T: Decodable>(_ endPoint: EndPoint, completion: @escaping (Result<T,Error>) -> Void) {
+        
         let task = URLSession.shared.dataTask(with: endPoint.request()) { data, response, error in
             
-            if let error =  error {
+            if let error =  error {
                 completion(.failure(error))
             }
             
@@ -33,7 +34,7 @@ final class NetworkCaller {
                 let decoderData = try JSONDecoder().decode(T.self, from: data)
                     completion(.success(decoderData))
             } catch let error {
-                print(error)
+                completion(.failure(error))
                 
             }
         }
